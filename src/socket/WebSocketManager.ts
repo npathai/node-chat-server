@@ -39,7 +39,7 @@ export default class WebSocketManager {
 
                 let messagePayload = JSON.parse(message.utf8Data)
 
-                console.log(`Received message ${JSON.stringify(messagePayload)}`)
+                console.log(`Received message ${messagePayload}`)
 
                 if (messagePayload.type === "bind") {
                     if (connection.isAnonymous) {
@@ -47,18 +47,10 @@ export default class WebSocketManager {
                         connection.username = messagePayload.username
                         WebSocketManager.connections.set(messagePayload.username, connection)
                     }
-                } else if (messagePayload.type === "message") {
-                    for (let messageListener of WebSocketManager.eventListeners) {
-                        messageListener.handleMessageEvent(connection, messagePayload)
-                    }
                 } else {
                     console.log("Unknown message type")
                 }
             })
         })
-    }
-
-    public static registerMessageListener(listener : SocketEventListener) : void {
-        WebSocketManager.eventListeners.push(listener)
     }
 }

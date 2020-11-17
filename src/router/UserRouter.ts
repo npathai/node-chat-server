@@ -20,5 +20,6 @@ export default class UserRouter {
         console.log("Adding create user path")
         this.router.post('/', UserController.createUser);
         this.router.post('/login', UserController.loginUser)
+        this.router.get("/:name/conversations", UserController.getConversationsByName)
     }
 }

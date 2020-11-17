@@ -14,14 +14,16 @@ export class ChatServer {
 
     init() {
         WebSocketManager.init(this._server)
-        this.messageListener = new MessageListener()
-        WebSocketManager.registerMessageListener(this.messageListener)
     }
 
     notifyIfConnected(messagePayload: Notification) {
         let receiverConnection = WebSocketManager.connections.get(messagePayload.receiverName)
         if (receiverConnection != null) {
-            receiverConnection.send(JSON.stringify({senderName: messagePayload.senderName, message: messagePayload.message}))
+            receiverConnection.send(JSON.stringify({receiverName: messagePayload.receiverName,
+                senderName: messagePayload.senderName,
+                message: messagePayload.message,
+                _id: messagePayload._id,
+                conversationId: messagePayload.conversationId}))
         }
     }
 
@@ -31,12 +33,15 @@ export class Notification {
     receiverName: string
     senderName: string
     message: string
+    conversationId: string
+    _id: string
 
-
-    constructor(receiverName: string, senderName: string, message: string) {
+    constructor(receiverName: string, senderName: string, message: string, conversationId: string, _id: string) {
         this.receiverName = receiverName;
         this.senderName = senderName;
         this.message = message;
+        this.conversationId = conversationId
+        this._id = _id
     }
 }
 

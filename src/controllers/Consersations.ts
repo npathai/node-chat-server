@@ -15,7 +15,7 @@ export class ConversationsController {
         ConversationModel.findOne({
             _id: req.params['id']
         }).then(conversation => {
-            res.status(200).json({id: conversation._id, members: conversation.members})
+            res.status(200).json({_id: conversation._id, members: conversation.members, messages: conversation.messages})
         }).catch(err => {
             console.log(err)
         })
@@ -25,17 +25,17 @@ export class ConversationsController {
         ConversationModel.findOne({
             members: {$all: req.body.members}
         }).then(conversation => {
-            res.status(200).json({id: conversation._id, members: conversation.members})
+            res.status(200).json({_id: conversation._id, members: conversation.members})
         }).catch(err => {
             console.log(err)
         })
     }
 
     public create(req: express.Request, res: express.Response, next: express.NextFunction): void {
-        let user = new ConversationModel(req.body)
+        let user = new ConversationModel({members: req.body.members})
         user.save().then((doc) => {
             console.log("Conversation created successfully")
-            res.status(200).json({id: doc._id, success: true})
+            res.status(200).json({_id: doc._id, members: doc.members, messages: doc.messages})
         }).catch(err => {
             console.log(err)
             res.status(500).json({
@@ -55,17 +55,24 @@ export class ConversationsController {
             conversation.save().then(savedDoc => {
                 let members = conversation.members
                 // Remove self
-                members.filter((value, index, arr) => {return value != req.body.senderName})
+                members = members.filter((value, index, arr) => {return value != req.body.senderName})
 
                 for (let member of members) {
-                    this.notificationServer.notifyIfConnected(new Notification(req.body.senderName, member, req.body.message))
+                    // FIXME send _id of last message saved
+                    // FIXME this should be async
+                    this.notify(new Notification(member, req.body.senderName, req.body.message, conversation._id, undefined))
                     // TODO This should a promise which will be helpful for blue tick feature
                 }
+                res.status(200).json({})
             }).catch(err => {
                 console.log(err)
             })
         }).catch(err => {
             console.log(err)
         })
+    }
+
+    public notify(notification: Notification) {
+        this.notificationServer.notifyIfConnected(notification)
     }
 }

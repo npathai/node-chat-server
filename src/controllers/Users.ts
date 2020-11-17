@@ -1,6 +1,7 @@
 import UserModel from '../models/UserModel';
 import * as express from 'express';
 import Auth from "../services/JwtToken";
+import ConversationModel from "../models/ConversationModel";
 class UserController {
 
     /**
@@ -99,6 +100,16 @@ class UserController {
 			.catch(err => {
 				res.status(401).json({})
 			})
+	}
+
+	public getConversationsByName(req: express.Request, res: express.Response, next: express.NextFunction): void {
+		ConversationModel.find({
+			members: {$in: [req.params['name']]}
+		}).then(conversations => {
+			res.status(200).json(conversations)
+		}).catch(err => {
+			res.status(500).json({})
+		})
 	}
 }
 
