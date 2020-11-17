@@ -59,6 +59,7 @@ class UserController {
 						next(error);
 				});
     }
+
     public updateUser(req: express.Request, res: express.Response, next: express.NextFunction): void {
         let updatePayload: any = {};
         UserModel.update(req.params,updatePayload)
@@ -85,6 +86,19 @@ class UserController {
 				error: err.message
 			})
 		})
+	}
+
+	public loginUser(req: express.Request, res: express.Response, next: express.NextFunction): void {
+		let loginRequest = req.body
+		UserModel.findOne({
+				name: req.body.username
+			})
+			.then((user) => {
+				res.status(200).json({username: user.name, id: user._id})
+			})
+			.catch(err => {
+				res.status(401).json({})
+			})
 	}
 }
 

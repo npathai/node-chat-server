@@ -1,18 +1,24 @@
 import * as debug from 'debug';
 import * as http from 'http';
-import Server from './server';
+import {Server} from './server';
 import * as serverHandlers from './serverHandlers';
 import WebSocketManager from "./socket/WebSocketManager";
+import {ChatServer} from "./chatserver";
 
 debug('ts-express:server');
 
 const port: string | number | boolean = serverHandlers.normalizePort(process.env.PORT || 3000);
 
-Server.set('port', port);
+const expressServer: Server = new Server()
+
+expressServer.app.set('port', port);
 
 console.log(`Server listening on port ${port}`);
+const server: http.Server = http.createServer(expressServer.app);
 
-const server: http.Server = http.createServer(Server);
+const chatServer: ChatServer = new ChatServer(server)
+
+expressServer.init(chatServer)
 
 // server listen
 server.listen(port);
@@ -26,5 +32,5 @@ server.on(
     serverHandlers.onListening.bind(server));
 server.on(
     'listening', () => {
-        WebSocketManager.init(server)
+        chatServer.init()
     });

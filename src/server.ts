@@ -2,6 +2,7 @@ import * as express from 'express';
 import Routes from './router';
 import Middleware from './config/middleware';
 import Cron from './config/cron';
+import {ChatServer} from "./chatserver";
 
 /**
  * @export
@@ -24,11 +25,11 @@ export class Server {
             // res.header('Access-Control-Allow-Credentials', true);
             return next();
           });
+    }
+
+    init(notificationServer: ChatServer) {
         Cron.init(); // Initialise the corn job here.
         Middleware.init(this);
-        Routes.init(this);
+        Routes.init(this, notificationServer);
     }
 }
-
-// export
-export default new Server().app;
