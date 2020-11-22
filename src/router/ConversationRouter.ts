@@ -14,9 +14,6 @@ export default class ConversationRouter {
         this.routes(notificationServer);
     }
 
-    /**
-     * @memberof UserRouter
-     */
     public routes(notificationServer: ChatServer): void {
         this.conversationController = new ConversationsController(notificationServer)
 

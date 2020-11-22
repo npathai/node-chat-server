@@ -55,15 +55,18 @@ export class ConversationsController {
             conversation.save().then(savedDoc => {
                 let members = conversation.members
                 // Remove self
+                let lastMessage = savedDoc.messages[savedDoc.messages.length - 1]
+
                 members = members.filter((value, index, arr) => {return value != req.body.senderName})
 
                 for (let member of members) {
                     // FIXME send _id of last message saved
                     // FIXME this should be async
-                    this.notify(new Notification(member, req.body.senderName, req.body.message, conversation._id, undefined))
+                    this.notify(new Notification(member, savedDoc._id, lastMessage))
                     // TODO This should a promise which will be helpful for blue tick feature
                 }
-                res.status(200).json({})
+                // Need to remove conversation id from response and think of proper solution for this
+                res.status(200).json({conversationId: savedDoc._id, message: lastMessage})
             }).catch(err => {
                 console.log(err)
             })
@@ -73,6 +76,6 @@ export class ConversationsController {
     }
 
     public notify(notification: Notification) {
-        this.notificationServer.notifyIfConnected(notification)
+        this.notificationServer.notify(notification)
     }
 }
