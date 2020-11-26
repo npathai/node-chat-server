@@ -4,7 +4,7 @@ import { IServer } from '../interfaces/ServerInterface';
 
 import Auth from "../services/JwtToken";
 import ConversationRouter from "./ConversationRouter";
-import {ChatServer} from "../chatserver";
+import {PushServer} from "../pushServer";
 
 export default class Routes {
     /**
@@ -13,7 +13,7 @@ export default class Routes {
      */
     private static conversationRouter: ConversationRouter;
 
-    static init(server: IServer, notificationServer: ChatServer): void {
+    static init(server: IServer, notificationServer: PushServer): void {
         const router: express.Router = express.Router();
         server.app.use('/', router);
         server.app.use('/api/verify', Auth.verifyRequestAuth);

@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {ConversationsController} from "../controllers/Consersations";
 
-import {ChatServer} from "../chatserver";
+import {PushServer} from "../pushServer";
 import * as express from "express";
 
 export default class ConversationRouter {
@@ -9,12 +9,12 @@ export default class ConversationRouter {
     public router: Router;
     conversationController: ConversationsController
 
-    constructor(notificationServer: ChatServer) {
+    constructor(notificationServer: PushServer) {
         this.router = Router();
         this.routes(notificationServer);
     }
 
-    public routes(notificationServer: ChatServer): void {
+    public routes(notificationServer: PushServer): void {
         this.conversationController = new ConversationsController(notificationServer)
 
         this.router.get('/:id', this.conversationController.getConversationById);

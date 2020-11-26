@@ -2,7 +2,7 @@ import * as express from 'express';
 import Routes from './router';
 import Middleware from './config/middleware';
 import Cron from './config/cron';
-import {ChatServer} from "./chatserver";
+import {PushServer} from "./pushServer";
 
 /**
  * @export
@@ -27,7 +27,7 @@ export class Server {
           });
     }
 
-    init(notificationServer: ChatServer) {
+    init(notificationServer: PushServer) {
         Cron.init(); // Initialise the corn job here.
         Middleware.init(this);
         Routes.init(this, notificationServer);

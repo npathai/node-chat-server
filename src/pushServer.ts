@@ -1,7 +1,7 @@
 import * as http from "http"
 import WebSocketManager from "./socket/WebSocketManager";
 
-export class ChatServer {
+export class PushServer {
     private _server: http.Server;
 
     constructor(server: http.Server) {

@@ -1,14 +1,14 @@
 import * as express from 'express';
 import ConversationModel from "../models/ConversationModel";
 import MessageModel from "../models/MessageModel";
-import {ChatServer} from "../chatserver";
-import {Notification} from "../chatserver";
+import {PushServer} from "../pushServer";
+import {Notification} from "../pushServer";
 
 export class ConversationsController {
-    notificationServer : ChatServer
+    pushServer : PushServer
 
-    constructor(notificationServer: ChatServer) {
-        this.notificationServer = notificationServer
+    constructor(pushServer: PushServer) {
+        this.pushServer = pushServer
     }
 
     public getConversationById(req: express.Request, res: express.Response, next: express.NextFunction): void {
@@ -76,6 +76,6 @@ export class ConversationsController {
     }
 
     public notify(notification: Notification) {
-        this.notificationServer.notify(notification)
+        this.pushServer.notify(notification)
     }
 }
