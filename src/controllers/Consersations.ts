@@ -59,12 +59,9 @@ export class ConversationsController {
 
                 members = members.filter((value, index, arr) => {return value != req.body.senderName})
 
-                for (let member of members) {
-                    // FIXME send _id of last message saved
-                    // FIXME this should be async
-                    this.notify(new Notification(member, savedDoc._id, lastMessage))
-                    // TODO This should a promise which will be helpful for blue tick feature
-                }
+                this.notifyMembers(members, savedDoc, lastMessage).then(() => {
+                    console.log("Notified members")
+                })
                 // Need to remove conversation id from response and think of proper solution for this
                 res.status(200).json({conversationId: savedDoc._id, message: lastMessage})
             }).catch(err => {
@@ -73,6 +70,14 @@ export class ConversationsController {
         }).catch(err => {
             console.log(err)
         })
+    }
+
+    private async notifyMembers(members, savedDoc, lastMessage) {
+        for (let member of members) {
+            // FIXME this should be async
+            this.notify(new Notification(member, savedDoc._id, lastMessage))
+            // TODO This should a promise which will be helpful for blue tick feature
+        }
     }
 
     public notify(notification: Notification) {
